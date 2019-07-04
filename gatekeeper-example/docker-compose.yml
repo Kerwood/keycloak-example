@@ -14,26 +14,26 @@ services:
     restart: always
     command: >
       --skip-openid-provider-tls-verify=true
-      --discovery-url=https://your-keycloak-domain.org/auth/realms/your-realm-name # URL to your Keycloak realm
-      --upstream-url=http://hello-world # The url til the application behind the GateKeeper
-      --redirection-url=http://the-url-to-this-application.example.org # The URL to the application
-      --client-id=client-name # Client username from Keycloak
-      --client-secret=f3d6e571-3c88-dbac-a151-83b791a34b99 # Client secret from Keycloak
-      --encryption-key='e36Rh8v4UFmCy7wUxE23zpFPKcrBsJcu' # Random characters, just create your own.
-      --cookie-domain=example.org # Use the same cookie for all sites of the domain.
-      --listen=0.0.0.0:3000 # The interface and port to listen on. 0.0.0.0 means "any interface"
+      --discovery-url=https://your-keycloak-domain.org/auth/realms/your-realm-name
+      --upstream-url=http://hello-world 
+      --redirection-url=http://the-url-to-this-application.example.org
+      --client-id=client-name
+      --client-secret=f3d6e571-3c88-dbac-a151-83b791a34b99
+      --encryption-key='e36Rh8v4UFmCy7wUxE23zpFPKcrBsJcu'
+      --cookie-domain=example.org
+      --listen=0.0.0.0:3000 
       --enable-refresh-tokens=true
       --enable-encrypted-token=true
       --enable-default-deny=true
       --http-only-cookie=true
       --secure-cookie=true
       --enable-logout-redirect=true
-      --forbidden-page=/forbidden.html.tmpl # This line is optional and will present a more stylish "Access denied" page. 
+      --forbidden-page=/forbidden.html.tmpl
       --enable-token-header=false
       --enable-authorization-header=false
-      --resources="uri=/*|roles=hello-world-access" # The roles needed to gain access to the application behind GateKeeper
+      --resources="uri=/*|roles=hello-world-access"
     volumes:
-      - ./forbidden.html.tmpl:/forbidden.html.tmpl # Mount the forbidden page inside the container.
+      - ./forbidden.html.tmpl:/forbidden.html.tmpl
     ports:
       - 80:3000
 
