@@ -13,20 +13,16 @@ services:
     image: keycloak/keycloak-gatekeeper
     restart: always
     command: >
-      --skip-openid-provider-tls-verify=true
       --discovery-url=https://your-keycloak-domain.org/auth/realms/your-realm-name
-      --upstream-url=http://hello-world 
-      --redirection-url=http://the-url-to-this-application.example.org
-      --client-id=client-name
+      --upstream-url=http://hello-world
+      --redirection-url=http://hello-world.example.org
+      --client-id=hello-world
       --client-secret=f3d6e571-3c88-dbac-a151-83b791a34b99
       --encryption-key='e36Rh8v4UFmCy7wUxE23zpFPKcrBsJcu'
       --cookie-domain=example.org
-      --listen=0.0.0.0:3000 
+      --listen=0.0.0.0:3000
       --enable-refresh-tokens=true
       --enable-encrypted-token=true
-      --enable-default-deny=true
-      --http-only-cookie=true
-      --secure-cookie=true
       --enable-logout-redirect=true
       --forbidden-page=/forbidden.html.tmpl
       --enable-token-header=false
@@ -36,4 +32,3 @@ services:
       - ./forbidden.html.tmpl:/forbidden.html.tmpl
     ports:
       - 80:3000
-
