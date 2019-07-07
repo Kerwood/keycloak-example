@@ -22,7 +22,7 @@ services:
   hello-world-proxy:
     container_name: hello-world-proxy
     image: keycloak/keycloak-gatekeeper
-    restart: always
+    restart: unless-stopped
     command: >
       --discovery-url=https://my-keycloak-domain.org/auth/realms/my-realm
       --upstream-url=http://hello-world
