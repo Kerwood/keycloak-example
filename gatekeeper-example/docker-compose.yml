@@ -27,8 +27,8 @@ services:
       --forbidden-page=/forbidden.html.tmpl
       --enable-token-header=false
       --enable-authorization-header=false
-      --resources="uri=/*|roles=hello-world-access"
       --secure-cookie=false
+      --resources="uri=/*|roles=hello-world-access"
     volumes:
       - ./forbidden.html.tmpl:/forbidden.html.tmpl
     ports:
