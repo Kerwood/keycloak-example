@@ -126,9 +126,11 @@ Change the three fields you see on the screenshot below accordingly.
 
 ![](images/configure-user-1.png)
 
-Go to the "Credentials" that appeared at the top, after you press save.
+Go to the "Credentials" tab that appeared at the top, after you pressed save.
 You need to copy the secret and the client name you created, to the `docker-compose.yml` file.
+
 ![](images/configure-user-2.png)
+
 ```
 --client-id=hello-world
 --client-secret=660c722a-b178-4d33-87c6-5973c4c4ee07
@@ -145,7 +147,7 @@ In lack of a better name, write `good-service` or somthing similar.
 ![](images/add-scope.png)
 
 Then go to the "Mappers" tab and press the "Create" button.  
-Give it a name, change "Mapper Type" to "Audience" and add the client name to the "Included Custom Audience" field, that you create in the previous step.
+Give it a name, change "Mapper Type" to "Audience" and add the client name, that you create in the previous step, to the "Included Custom Audience" field.
 
 ![](images/create-proto-map.png)
 
@@ -200,3 +202,7 @@ Under the "Role Mappings" tab, add the the `hello-world-access` role to the user
 ## Deploy Hello World and GateKeeper
 Change the parameters to fit your needs in the `docker-compose.yml` file.
 Run `docker-compose up -d` to start the the Hello World app and Ketcloak GateKeeper.
+
+You should now be able to login to the Hello World app through Keycloak Gatekeeper.
+
+![](images/hello-world.png)
