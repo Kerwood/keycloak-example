@@ -13,11 +13,11 @@ services:
     image: keycloak/keycloak-gatekeeper
     restart: always
     command: >
-      --discovery-url=https://your-keycloak-domain.org/auth/realms/your-realm-name
+      --discovery-url=https://my-keycloak-domain.org/auth/realms/my-realm
       --upstream-url=http://hello-world
       --redirection-url=http://hello-world.example.org
       --client-id=hello-world
-      --client-secret=f3d6e571-3c88-dbac-a151-83b791a34b99
+      --client-secret=660c722a-b178-4d33-87c6-5973c4c4ee07
       --encryption-key='e36Rh8v4UFmCy7wUxE23zpFPKcrBsJcu'
       --cookie-domain=example.org
       --listen=0.0.0.0:3000
@@ -28,6 +28,7 @@ services:
       --enable-token-header=false
       --enable-authorization-header=false
       --resources="uri=/*|roles=hello-world-access"
+      --secure-cookie=false
     volumes:
       - ./forbidden.html.tmpl:/forbidden.html.tmpl
     ports:

@@ -24,11 +24,11 @@ services:
     image: keycloak/keycloak-gatekeeper
     restart: always
     command: >
-      --discovery-url=https://your-keycloak-domain.org/auth/realms/your-realm-name
+      --discovery-url=https://my-keycloak-domain.org/auth/realms/my-realm
       --upstream-url=http://hello-world
       --redirection-url=http://hello-world.example.org
       --client-id=hello-world
-      --client-secret=f3d6e571-3c88-dbac-a151-83b791a34b99
+      --client-secret=660c722a-b178-4d33-87c6-5973c4c4ee07
       --encryption-key='e36Rh8v4UFmCy7wUxE23zpFPKcrBsJcu'
       --cookie-domain=example.org
       --listen=0.0.0.0:3000
@@ -38,6 +38,7 @@ services:
       --forbidden-page=/forbidden.html.tmpl
       --enable-token-header=false
       --enable-authorization-header=false
+      --secure-cookie=false
       --resources="uri=/*|roles=hello-world-access"
     volumes:
       - ./forbidden.html.tmpl:/forbidden.html.tmpl
@@ -98,7 +99,104 @@ A list of all options can be found in the `gatekeeper-global-options.txt` file.
 --enable-authorization-header=false
   # Adds the authorization header to the proxy request (default: true)
 
+--secure-cookie=false
+  # Enforces the cookie to be secure (default: true)
+  # [Sinces this example is without SSL, this parameter needs to be false]
+  # [If you are using SSL, just delete this parameter]
+
 --resources="uri=/*|roles=hello-world-access"
   # List of resources 'uri=/admin*|methods=GET,PUT|roles=role1,role2'
   # [The roles needed to gain access to the application behind GateKeeper]
 ```
+
+## Keycloak Configuration
+### Create Realm
+Hover over the current realm name in the top left corner and press "Add realm".  
+Fill in the name and press create.
+
+![](images/create-realm.png)
+
+### Create Client
+Now press "Clients" in the menu and "Create" in the top right corner.  
+Just fill in the name and press save.
+
+![](images/add-client.png)
+
+Change the three fields you see on the screenshot below accordingly.
+
+![](images/configure-user-1.png)
+
+Go to the "Credentials" that appeared at the top, after you press save.
+You need to copy the secret and the client name you created, to the `docker-compose.yml` file.
+![](images/configure-user-2.png)
+```
+--client-id=hello-world
+--client-secret=660c722a-b178-4d33-87c6-5973c4c4ee07
+```
+### Configure Audience Field
+Ok, so the next few steps are necessary or you will encounter below error in GateKeeper.
+```
+unable to verify the id token	{"error": "oidc: JWT claims invalid: invalid claims, 'aud' claim and 'client_id' do not match, aud=account, client_id=hello-world"}
+```
+
+Go to "Client Scopes" in the main menu and press "Create" to create en new scope.
+In lack of a better name, write `good-service` or somthing similar.
+
+![](images/add-scope.png)
+
+Then go to the "Mappers" tab and press the "Create" button.  
+Give it a name, change "Mapper Type" to "Audience" and add the client name to the "Included Custom Audience" field, that you create in the previous step.
+
+![](images/create-proto-map.png)
+
+Now go to "Clients" in the main menu and edit the client `hello-world`.  
+Go to the "Client Scopes" tab and add the `good-service` scope.
+
+![](images/add-scope-to-client.png)
+
+More information about Client Scopes and Audience can be found here.
+[https://stackoverflow.com/questions/53550321/keycloak-gatekeeper-aud-claim-and-client-id-do-not-match](https://stackoverflow.com/questions/53550321/keycloak-gatekeeper-aud-claim-and-client-id-do-not-match)
+[https://github.com/keycloak/keycloak-documentation/blob/master/server_admin/topics/clients/client-scopes.adoc](https://github.com/keycloak/keycloak-documentation/blob/master/server_admin/topics/clients/client-scopes.adoc)
+[https://github.com/keycloak/keycloak-documentation/blob/master/server_admin/topics/clients/oidc/audience.adoc](https://github.com/keycloak/keycloak-documentation/blob/master/server_admin/topics/clients/oidc/audience.adoc)
+
+### Configure Roles
+This is the part where you create the roles you assign to users, that gives access to what not. As you can see in the `docker-compose.yml` file, you can set fine grained access control with the `--resources` parameter.  
+Here's a couple of exampels.
+```
+--resources="uri=/admin*|roles=test1,test2"
+--resources="uri=/backend*|roles=test1"
+--resources="uri=/css/*|white-listed=true"
+--resources="uri=/img/*|white-listed=true"
+--resources="uri=/public/*|white-listed=true"
+```
+```
+--resources="uri=/admin*|roles=admin,root|require-any-role=true"
+--resources="uri=/public*|white-listed=true"
+--resources="uri=/authenticated/users|roles=user"
+```
+
+In my `docker-compose.yml` file I only have below parameter, which means that a user only needs the `hello-world-access` role to gain access to the entire Hello World application.
+```
+--resources="uri=/*|roles=hello-world-access"
+```
+
+So, go to "Roles" in the main menu and click "Add Roles". Give it name, in this example `hello-world-access`, and press "Save".
+
+![](images/add-role.png)
+
+### Create User
+Press the "Users" in the main menu and press "Add user" to create one.
+
+![](images/create-user.png)
+
+Under the "Credentials" tab, give the user a password.
+
+![](images/add-user-pass.png)
+
+Under the "Role Mappings" tab, add the the `hello-world-access` role to the user.
+
+![](images/role-mapping.png)
+
+## Deploy Hello World and GateKeeper
+Change the parameters to fit your needs in the `docker-compose.yml` file.
+Run `docker-compose up -d` to start the the Hello World app and Ketcloak GateKeeper.
